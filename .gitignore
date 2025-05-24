@@ -1,0 +1,56 @@
+# Unreal Engine
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vscode/
+.vs/
+*.VC.db
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.log
+*.tlog
+*.ipch/
+*.aps
+*.ncb
+*.cache
+*.pdb
+*.obj
+*.exe
+*.dll
+*.lib
+*.pyc
+*.xcodeproj
+*.xcworkspace
+
+# Rider / JetBrains
+.idea/
+*.iml
+*.iws
+out/
+.gradle/
+build/
+*.ipr
+*.bat
+*.swp
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Git-specific
+*.orig
+*.rej
+*.bak
+
+# Optional
+# Keep project file and config clean
+Build/
+*.target
+*.code-workspace
+/Content/StarterContent
