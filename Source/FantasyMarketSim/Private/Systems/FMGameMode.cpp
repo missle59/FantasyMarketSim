@@ -18,6 +18,9 @@ void AFMGameMode::BeginPlay()
 	// Spawn TimeManager
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 	TimeManager = GetWorld()->SpawnActor<AFMTimeManager>(AFMTimeManager::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	FActorSpawnParameters ShopSpawnParams;
+	ShopSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	ShopManager = GetWorld()->SpawnActor<AFMShopManager>(AFMShopManager::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, ShopSpawnParams);
 }

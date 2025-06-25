@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "FantasyMarketSim/Public/Managers/FMTimeManager.h"
+#include "Managers/FMTimeManager.h"
 
 
 // Sets default values
