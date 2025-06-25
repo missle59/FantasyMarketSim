@@ -107,6 +107,15 @@ See full breakdown in the [📄 Technical Design Document](FantasyMarketSimulato
 
 ---
 
+## ⚠️ License & Use Disclaimer
+
+This project is protected under the [Creative Commons Attribution-NonCommercial 4.0 License](LICENSE.md).  
+You may view, share, or build upon this project **for non-commercial purposes only**, with appropriate credit.
+
+Please contact the author for commercial use, collaborations, or distribution inquiries.
+
+---
+
 ## 🚀 Setup Instructions
 
 > These will be updated once Phase 0 is complete.
