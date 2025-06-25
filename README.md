@@ -103,7 +103,7 @@ These same patterns are applicable to retail software, training simulations, or 
 
 ## 📁 Project Structure
 
-See full breakdown in the [📄 Technical Design Document](FantasyMarketSimulator_TDD.md)
+See full breakdown in the [📄 Technical Design Document](Docs/FantasyMarketSimulator_TDD.md)
 
 ---
 
