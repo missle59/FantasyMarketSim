@@ -88,11 +88,12 @@ These same patterns are applicable to retail software, training simulations, or 
 ---
 
 ## 📅 Development Status
+See full breakdown in [📄 PHASES.md](docs/PHASES.md)
 
 | Phase                          | Status         |
 |--------------------------------|----------------|
-| Phase 0 – Setup & Baseline     | 🔧 In Progress |
-| Phase 1 – Engine Foundations   | ⏳ Not Started |
+| Phase 0 – Setup & Baseline     | ✅ Complete |
+| Phase 1 – Engine Foundations   | 🔧 In Progress |
 | Phase 2 – Blueprint Prototyping| ⏳ Not Started |
 | Phase 3 – Core Logic in C++    | ⏳ Not Started |
 | Phase 4 – Worker AI & Task Queues | ⏳ Not Started |
