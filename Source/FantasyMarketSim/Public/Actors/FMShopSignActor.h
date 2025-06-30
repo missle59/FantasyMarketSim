@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Managers/FMShopManager.h"
+#include "Interfaces/Interactable.h"
 #include "FMShopSignActor.generated.h"
 
 UCLASS()
-class FANTASYMARKETSIM_API AFMShopSignActor : public AActor
+class FANTASYMARKETSIM_API AFMShopSignActor : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -20,28 +20,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shop")
-	AFMShopManager* ShopManager;
+public:	
+	virtual void Tick(float DeltaTime) override;
 
+	virtual void Interact_Implementation(AActor* Interactor) override;
+
+protected:
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* PostMesh;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* SignMesh;
-
-	UPROPERTY(EditAnywhere, Category = "Shop")
-	FRotator ClosedRotation;
-
-	UPROPERTY(EditAnywhere, Category = "Shop")
-	FRotator OpenRotation;
-
-	UPROPERTY(EditAnywhere, Category = "Shop")
-	bool bIsOpen = false;
-
-private:
-	void RotateSign();
+	UStaticMeshComponent* Mesh;
 };

@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Camera/CameraComponent.h"
 #include "FMPlayerCharacter.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class FANTASYMARKETSIM_API AFMPlayerCharacter : public ACharacter
@@ -26,7 +30,30 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void Move(const struct FInputActionValue& Value);
+	void Look(const struct FInputActionValue& Value);
+	void Interact();
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class UCameraComponent* CameraComponent;
+
+	// Input actions (set via ConstructorHelpers or later data system)
+	UPROPERTY()
+	UInputAction* MoveAction;
+
+	UPROPERTY()
+	UInputAction* LookAction;
+
+	UPROPERTY()
+	UInputAction* InteractAction;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	UPROPERTY()
+	class UUserWidget* HUDWidget;
+
+private:
+	UInputMappingContext* DefaultMappingContext;
 };

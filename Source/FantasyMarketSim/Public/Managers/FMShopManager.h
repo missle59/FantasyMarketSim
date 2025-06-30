@@ -34,4 +34,7 @@ public:
 
 private:
 	bool bIsShopOpen;
+
+public:
+	void ToggleShopOpen();
 };

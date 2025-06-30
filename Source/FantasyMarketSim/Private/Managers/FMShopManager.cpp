@@ -26,3 +26,17 @@ void AFMShopManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void AFMShopManager::ToggleShopOpen()
+{
+	bIsShopOpen = !bIsShopOpen;
+
+	if (bIsShopOpen)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FMShopManager: The shop is now OPEN."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FMShopManager: The shop is now CLOSED."));
+	}
+}
