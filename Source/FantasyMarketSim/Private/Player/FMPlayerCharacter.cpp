@@ -11,6 +11,7 @@
 #include "InputAction.h"
 #include "DrawDebugHelpers.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "Interfaces/Interactable.h"
 
 // Sets default values
@@ -51,7 +52,7 @@ AFMPlayerCharacter::AFMPlayerCharacter()
 		InteractAction = InteractActionAsset.Object;
 	}
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> HUDWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_HUD.WBP_HUD"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> HUDWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_HUD.WBP_HUD_C"));
 	if (HUDWidgetBPClass.Succeeded())
 	{
 		HUDWidgetClass = HUDWidgetBPClass.Class;
@@ -85,6 +86,27 @@ void AFMPlayerCharacter::BeginPlay()
 			HUDWidget->AddToViewport();
 		}
 	}
+
+	if (HUDWidget)
+	{
+		GoldText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("GoldText")));
+		TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("TimeText")));
+		ShopLevelText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("ShopLevelText")));
+
+		if (GoldText)
+		{
+			GoldText->SetText(FText::FromString(TEXT("Gold: 100")));
+		}
+		if (TimeText)
+		{
+			TimeText->SetText(FText::FromString(TEXT("Time: 08:00 AM")));
+		}
+		if (ShopLevelText)
+		{
+			ShopLevelText->SetText(FText::FromString(TEXT("Shop Level: 1")));
+		}
+	}
+
 }
 
 // Called every frame

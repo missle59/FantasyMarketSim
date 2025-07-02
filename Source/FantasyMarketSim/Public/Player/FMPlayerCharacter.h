@@ -54,6 +54,10 @@ protected:
 	UPROPERTY()
 	class UUserWidget* HUDWidget;
 
+	class UTextBlock* GoldText;
+	class UTextBlock* TimeText;
+	class UTextBlock* ShopLevelText;
+
 private:
 	UInputMappingContext* DefaultMappingContext;
 };
