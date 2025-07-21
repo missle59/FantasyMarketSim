@@ -23,5 +23,12 @@ class FANTASYMARKETSIM_API IInteractable
 public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Interaction")
 	void Interact(AActor* Interactor);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Interaction")
+	void OnFocusGained();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Interaction")
+	void OnFocusLost();
+
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 };

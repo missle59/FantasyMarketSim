@@ -28,6 +28,8 @@ AFMPlayerCharacter::AFMPlayerCharacter()
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
+	HeldItem = nullptr;
+
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingAsset(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (InputMappingAsset.Succeeded())
 	{
@@ -113,6 +115,7 @@ void AFMPlayerCharacter::BeginPlay()
 void AFMPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	UpdateTargetActor();
 }
 
 // Called to bind functionality to input
@@ -155,10 +158,16 @@ void AFMPlayerCharacter::Look(const FInputActionValue& Value)
 
 void AFMPlayerCharacter::Interact()
 {
+	if (InteractTarget)
+	{
+		IInteractable::Execute_Interact(InteractTarget, this);
+	}
+}
+
+void AFMPlayerCharacter::UpdateTargetActor()
+{
 	const FVector Start = CameraComponent->GetComponentLocation();
 	const FVector End = Start + (CameraComponent->GetForwardVector() * 300.0f);
-
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
 
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
@@ -168,23 +177,37 @@ void AFMPlayerCharacter::Interact()
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams))
 	{
 		AActor* HitActor = HitResult.GetActor();
-		if (HitActor)
+		if (HitActor != InteractTarget)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Hit actor: %s"), *HitActor->GetName());
-
-			if (HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+			if (InteractTarget && InteractTarget->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 			{
-				UE_LOG(LogTemp, Log, TEXT("Calling Interact on %s"), *HitActor->GetName());
-				IInteractable::Execute_Interact(HitActor, this);
+				IInteractable::Execute_OnFocusLost(InteractTarget);
+			}
+
+			if (HitActor && HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+			{
+				IInteractable::Execute_OnFocusGained(HitActor);
+				InteractTarget = HitActor;
+
+				UE_LOG(LogTemp, Log, TEXT("Now looking at: %s"), *HitActor->GetName());
 			}
 			else
 			{
-				UE_LOG(LogTemp, Log, TEXT("%s does not implement IInteractable"), *HitActor->GetName());
+				InteractTarget = nullptr;
 			}
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Nothing hit"));
+		// Only clear if something was previously set
+		if (InteractTarget)
+		{
+			if (InteractTarget->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+			{
+				IInteractable::Execute_OnFocusLost(InteractTarget);
+			}
+			InteractTarget = nullptr;
+			UE_LOG(LogTemp, Log, TEXT("No interactable in view"));
+		}
 	}
 }

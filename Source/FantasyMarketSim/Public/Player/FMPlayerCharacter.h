@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/ItemActor.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "FMPlayerCharacter.generated.h"
@@ -33,6 +34,13 @@ public:
 	void Move(const struct FInputActionValue& Value);
 	void Look(const struct FInputActionValue& Value);
 	void Interact();
+	void UpdateTargetActor();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+	AItemActor* HeldItem;
+
+	UPROPERTY(VisibleAnywhere, Category="Interaction")
+	AActor* InteractTarget;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
