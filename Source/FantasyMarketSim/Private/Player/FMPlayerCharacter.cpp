@@ -108,7 +108,6 @@ void AFMPlayerCharacter::BeginPlay()
 			ShopLevelText->SetText(FText::FromString(TEXT("Shop Level: 1")));
 		}
 	}
-
 }
 
 // Called every frame
@@ -211,3 +210,48 @@ void AFMPlayerCharacter::UpdateTargetActor()
 		}
 	}
 }
+
+void AFMPlayerCharacter::EquipTool(EEquippedTool Tool)
+{
+	if (CurrentToolActor)
+	{
+		CurrentToolActor->Destroy();
+		CurrentToolActor = nullptr;
+	}
+	if (Tool == EEquippedTool::None)
+	{
+		EquippedTool = EEquippedTool::None;
+		return;
+	}
+
+	TSubclassOf<AToolBase>* ToolClassPtr = ToolBaseClassMap.Find(Tool);
+
+	if (!ToolClassPtr || !*ToolClassPtr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tool class not found for tool type."))
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	CurrentToolActor = GetWorld()->SpawnActor<AToolBase>(*ToolClassPtr, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (!CurrentToolActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn tool actor."))
+		return;
+	}
+
+	CurrentToolActor->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	EquippedTool = Tool;
+}
+
+void AFMPlayerCharacter::UnEquipTool()
+{
+	
+}
+

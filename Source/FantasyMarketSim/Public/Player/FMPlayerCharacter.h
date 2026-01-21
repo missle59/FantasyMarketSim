@@ -6,6 +6,8 @@
 #include "Actors/ItemActor.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Data/EEquippedTool.h"
+#include "Tools/ToolBase.h"
 #include "FMPlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -36,6 +38,12 @@ public:
 	void Interact();
 	void UpdateTargetActor();
 
+	UFUNCTION(BlueprintCallable, Category = "Tools")
+	void EquipTool(EEquippedTool Tool);
+
+	UFUNCTION(BlueprintCallable, Category = "Tools")
+	void UnEquipTool();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
 	AItemActor* HeldItem;
 
@@ -65,6 +73,26 @@ protected:
 	class UTextBlock* GoldText;
 	class UTextBlock* TimeText;
 	class UTextBlock* ShopLevelText;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Tools")
+	EEquippedTool EquippedTool = EEquippedTool::None;
+
+	UPROPERTY()
+	AToolBase* CurrentToolActor = nullptr;
+	
+	TMap<EEquippedTool, TSubclassOf<AToolBase>> ToolBaseClassMap;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Tools")
+	TSubclassOf<AToolBase> CrateClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Tools")
+	TSubclassOf<AToolBase> SackClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Tools")
+	TSubclassOf<AToolBase> HatchetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Tools")
+	TSubclassOf<AToolBase> PestleClass;
 
 private:
 	UInputMappingContext* DefaultMappingContext;
