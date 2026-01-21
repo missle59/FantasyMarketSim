@@ -211,20 +211,20 @@ void AFMPlayerCharacter::UpdateTargetActor()
 	}
 }
 
-void AFMPlayerCharacter::EquipTool(EEquippedTool Tool)
+void AFMPlayerCharacter::EquipTool(EEquippedTool ToolType)
 {
 	if (CurrentToolActor)
 	{
 		CurrentToolActor->Destroy();
 		CurrentToolActor = nullptr;
 	}
-	if (Tool == EEquippedTool::None)
+	if (ToolType == EEquippedTool::None)
 	{
 		EquippedTool = EEquippedTool::None;
 		return;
 	}
 
-	TSubclassOf<AToolBase>* ToolClassPtr = ToolBaseClassMap.Find(Tool);
+	TSubclassOf<AToolBase>* ToolClassPtr = ToolBaseClassMap.Find(ToolType);
 
 	if (!ToolClassPtr || !*ToolClassPtr)
 	{
@@ -243,15 +243,20 @@ void AFMPlayerCharacter::EquipTool(EEquippedTool Tool)
 	if (!CurrentToolActor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn tool actor."))
-		return;
+		CurrentToolActor->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	}
-
-	CurrentToolActor->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	EquippedTool = Tool;
+	
+	EquippedTool = ToolType;
 }
 
 void AFMPlayerCharacter::UnEquipTool()
 {
-	
+	if (CurrentToolActor)
+	{
+		CurrentToolActor->Destroy();
+		CurrentToolActor = nullptr;
+	}
+
+	EquippedTool = EEquippedTool::None;
 }
 

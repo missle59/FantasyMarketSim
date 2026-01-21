@@ -12,6 +12,8 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UUserWidget;
+class UTextBlock;
 
 UCLASS()
 class FANTASYMARKETSIM_API AFMPlayerCharacter : public ACharacter
@@ -39,7 +41,7 @@ public:
 	void UpdateTargetActor();
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void EquipTool(EEquippedTool Tool);
+	void EquipTool(EEquippedTool ToolType);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void UnEquipTool();
@@ -52,7 +54,7 @@ public:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	class UCameraComponent* CameraComponent;
+	UCameraComponent* CameraComponent;
 
 	// Input actions (set via ConstructorHelpers or later data system)
 	UPROPERTY()
@@ -65,14 +67,14 @@ protected:
 	UInputAction* InteractAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="UI")
-	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	TSubclassOf<UUserWidget> HUDWidgetClass;
 
 	UPROPERTY()
-	class UUserWidget* HUDWidget;
+	UUserWidget* HUDWidget;
 
-	class UTextBlock* GoldText;
-	class UTextBlock* TimeText;
-	class UTextBlock* ShopLevelText;
+	UTextBlock* GoldText;
+	UTextBlock* TimeText;
+	UTextBlock* ShopLevelText;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Tools")
 	EEquippedTool EquippedTool = EEquippedTool::None;
