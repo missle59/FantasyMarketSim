@@ -52,6 +52,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category="Interaction")
 	AActor* InteractTarget;
 	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetPendingTool(EEquippedTool ToolType);
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
@@ -95,7 +98,25 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Tools")
 	TSubclassOf<AToolBase> PestleClass;
+	
+	UPROPERTY()
+	UInputAction* ShowToolMenuAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category="UI|Tools")
+	TSubclassOf<UUserWidget> ToolMenuWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* ToolMenuWidget = nullptr;
+
+	// UI control
+	void ShowToolMenu();
+	void HideToolMenu();
+	
+	bool bIsToolMenuOpen = false;
+	
+	EEquippedTool PendingTool = EEquippedTool::None;
 
 private:
+	UPROPERTY()
 	UInputMappingContext* DefaultMappingContext;
 };

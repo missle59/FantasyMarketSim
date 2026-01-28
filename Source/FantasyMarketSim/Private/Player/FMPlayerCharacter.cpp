@@ -29,6 +29,7 @@ AFMPlayerCharacter::AFMPlayerCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	HeldItem = nullptr;
+	InteractTarget = nullptr;
 
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingAsset(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (InputMappingAsset.Succeeded())
@@ -59,12 +60,29 @@ AFMPlayerCharacter::AFMPlayerCharacter()
 	{
 		HUDWidgetClass = HUDWidgetBPClass.Class;
 	}
+	
+	static ConstructorHelpers::FObjectFinder<UInputAction> ShowToolMenuActionAsset(TEXT("/Game/Input/IA_ShowToolMenu.IA_ShowToolMenu"));
+	if (ShowToolMenuActionAsset.Succeeded())
+	{
+		ShowToolMenuAction = ShowToolMenuActionAsset.Object;
+	}
+	
+	static ConstructorHelpers::FClassFinder<UUserWidget> ToolMenuWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_ToolMenu.WBP_ToolMenu_C"));
+	if (ToolMenuWidgetBPClass.Succeeded())
+	{
+		ToolMenuWidgetClass = ToolMenuWidgetBPClass.Class;
+	}
 }
 
 // Called when the game starts or when spawned
 void AFMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	ToolBaseClassMap.Add(EEquippedTool::Crate, CrateClass);
+	ToolBaseClassMap.Add(EEquippedTool::Sack, SackClass);
+	ToolBaseClassMap.Add(EEquippedTool::Hatchet, HatchetClass);
+	ToolBaseClassMap.Add(EEquippedTool::Pestle, PestleClass);
 
 	// Ensure a controller exists and is a player controller
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
@@ -75,7 +93,10 @@ void AFMPlayerCharacter::BeginPlay()
 			// Access the Enhanced Input Subsystem and apply the mapping
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				if (DefaultMappingContext)
+				{
+					Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				}
 			}
 		}
 	}
@@ -137,6 +158,13 @@ void AFMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		if (InteractAction)
 		{
 			EnhancedInput->BindAction(InteractAction, ETriggerEvent::Started, this, &AFMPlayerCharacter::Interact);
+		}
+		
+		if (ShowToolMenuAction)
+		{
+			EnhancedInput->BindAction(ShowToolMenuAction, ETriggerEvent::Started,   this, &AFMPlayerCharacter::ShowToolMenu);
+			EnhancedInput->BindAction(ShowToolMenuAction, ETriggerEvent::Completed, this, &AFMPlayerCharacter::HideToolMenu);
+			EnhancedInput->BindAction(ShowToolMenuAction, ETriggerEvent::Canceled,  this, &AFMPlayerCharacter::HideToolMenu);
 		}
 	}
 }
@@ -228,7 +256,7 @@ void AFMPlayerCharacter::EquipTool(EEquippedTool ToolType)
 
 	if (!ToolClassPtr || !*ToolClassPtr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tool class not found for tool type."))
+		UE_LOG(LogTemp, Warning, TEXT("Tool class not found for tool type."));
 		return;
 	}
 
@@ -242,10 +270,10 @@ void AFMPlayerCharacter::EquipTool(EEquippedTool ToolType)
 
 	if (!CurrentToolActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn tool actor."))
-		CurrentToolActor->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn tool actor."));
+		return;
 	}
-	
+	CurrentToolActor->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	EquippedTool = ToolType;
 }
 
@@ -260,3 +288,65 @@ void AFMPlayerCharacter::UnEquipTool()
 	EquippedTool = EEquippedTool::None;
 }
 
+void AFMPlayerCharacter::ShowToolMenu()
+{
+	if (bIsToolMenuOpen) return;
+	
+	if (!ToolMenuWidgetClass)
+	{
+		return;
+	}
+	
+	if (!ToolMenuWidget)
+	{
+		ToolMenuWidget = CreateWidget<UUserWidget>(GetWorld(), ToolMenuWidgetClass);
+	}
+	
+	if (!ToolMenuWidget)
+	{
+		return;
+	}
+	
+	ToolMenuWidget->AddToViewport();
+	
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		PC->bShowMouseCursor = true;
+		
+		FInputModeUIOnly Mode;
+		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		PC->SetInputMode(Mode);
+	}
+	
+	bIsToolMenuOpen = true;
+	PendingTool = EEquippedTool::None;
+}
+
+void AFMPlayerCharacter::HideToolMenu()
+{
+	if (ToolMenuWidget && bIsToolMenuOpen)
+	{
+		ToolMenuWidget->RemoveFromParent();
+		ToolMenuWidget = nullptr;
+
+		if (APlayerController* PC = Cast<APlayerController>(Controller))
+		{
+			PC->bShowMouseCursor = false;
+			PC->SetInputMode(FInputModeGameOnly());
+		}
+
+		bIsToolMenuOpen = false;
+
+		if (PendingTool != EEquippedTool::None)
+		{
+			EquipTool(PendingTool);
+		}
+		PendingTool = EEquippedTool::None;
+	}
+}
+
+
+void AFMPlayerCharacter::SetPendingTool(EEquippedTool ToolType)
+{
+	PendingTool = ToolType;
+}
