@@ -109,11 +109,14 @@ protected:
 	UUserWidget* ToolMenuWidget = nullptr;
 
 	// UI control
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowToolMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HideToolMenu();
 	
 	bool bIsToolMenuOpen = false;
 	
+	bool bToolSelectionMade = false;
 	EEquippedTool PendingTool = EEquippedTool::None;
 
 private:
